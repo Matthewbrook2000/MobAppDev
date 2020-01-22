@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">feettometersact</string>
+    <string name="convertBtn">Convert!</string>
+    <string name="lbl1">Feet:</string>
+</resources>
