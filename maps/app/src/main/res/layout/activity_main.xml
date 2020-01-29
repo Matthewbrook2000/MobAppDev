@@ -17,7 +17,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:id="@+id/et1"
             />
 
@@ -27,7 +27,7 @@
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
+            android:inputType="numberDecimal|numberSigned"
             android:id="@+id/et2"
             />
 
@@ -40,6 +40,7 @@
             android:enabled="true"
             android:clickable="true"
             android:id="@+id/map1"
+            android:layout_margin="10dp"
             tilesource="Mapnik"
             />
 

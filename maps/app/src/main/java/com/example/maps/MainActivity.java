@@ -50,19 +50,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView tv2 = (TextView)findViewById(R.id.tv2);
         EditText et2 = (EditText)findViewById(R.id.et2);
 
-        try
-//        {
-          mv.setX(Float.parseFloat(et.getText().toString()));
-        }
-        catch (Exception e)‏
-        {
-            System.out.println("exception occured");
-        }
+        Double longitude = Double.parseDouble(et.getText().toString());
 
-        mv.setY(Float.parseFloat(et2.getText().toString()));
+        Double latitude = Double.parseDouble(et2.getText().toString());
 
-        //double feet = Double.parseDouble(et.geText().toString());
-        //double metres = feet*0.305;
-        //tv.setText("In metres that is: " + metres);
+        mv.getController().setCenter(new GeoPoint(latitude, longitude));
+
     }
 }
