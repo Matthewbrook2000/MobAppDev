@@ -1,5 +1,6 @@
 package com.example.maps;
 
+        import android.support.v7.app.AlertDialog;
         import android.support.v7.app.AppCompatActivity;
         import android.content.Intent;
         import android.os.Bundle;
@@ -50,11 +51,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView tv2 = (TextView)findViewById(R.id.tv2);
         EditText et2 = (EditText)findViewById(R.id.et2);
 
-        Double longitude = Double.parseDouble(et.getText().toString());
+        Double longitude;
+        Double latitude;
 
-        Double latitude = Double.parseDouble(et2.getText().toString());
+        if(et.getText().toString().isEmpty()) {
+            new AlertDialog.Builder(this).setPositiveButton("OK", null).setMessage("enter longtitude").show();
+            return;
+        } else {
+            longitude = Double.parseDouble(et.getText().toString());
+        }
+        if(et2.getText().toString().isEmpty()) {
+            new AlertDialog.Builder(this).setPositiveButton("OK", null).setMessage("enter latitude").show();
+            return;
+        } else {
+            latitude = Double.parseDouble(et2.getText().toString());
+        }
 
         mv.getController().setCenter(new GeoPoint(latitude, longitude));
+
+
 
     }
 }
