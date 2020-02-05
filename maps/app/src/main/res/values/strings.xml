@@ -4,4 +4,9 @@
     <string name="longtitude">longtitude</string>
     <string name="latitude">latitude</string>
     <string name="zoom">Zoom</string>
+    <string name="selectmap">Select map</string>
+    <string name="choosemap">Choose map</string>
+    <string name="regularview">Regular view</string>
+    <string name="hikebikemapview">Hike bike map view</string>
+    <string name="setlocation">Set Location</string>
 </resources>
