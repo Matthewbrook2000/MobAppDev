@@ -1,5 +1,6 @@
 package com.example.maps;
 
+import android.content.SharedPreferences;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
@@ -23,11 +24,11 @@ import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
+public class MainActivity extends AppCompatActivity
 {
 
     MapView mv;
-
+    boolean isRecording;
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -45,35 +46,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mv.setMultiTouchControls(true);
         mv.getController().setZoom(16.0);
         mv.getController().setCenter(new GeoPoint(51.05,-0.72));
-        Button b = (Button)findViewById(R.id.btn1);
-        b.setOnClickListener(this);
+
+        if (savedInstanceState != null)
+        {
+            isRecording = savedInstanceState.getBoolean ("isRecording");
+        }
     }
 
-    public void onClick(View view){
-        TextView tv = (TextView)findViewById(R.id.tv1);
-        EditText et = (EditText)findViewById(R.id.et1);
-        TextView tv2 = (TextView)findViewById(R.id.tv2);
-        EditText et2 = (EditText)findViewById(R.id.et2);
-
-        Double longitude;
-        Double latitude;
-
-        if(et.getText().toString().isEmpty()) {
-            new AlertDialog.Builder(this).setPositiveButton("OK", null).setMessage("enter longtitude").show();
-            return;
-        } else {
-            longitude = Double.parseDouble(et.getText().toString());
-        }
-        if(et2.getText().toString().isEmpty()) {
-            new AlertDialog.Builder(this).setPositiveButton("OK", null).setMessage("enter latitude").show();
-            return;
-        } else {
-            latitude = Double.parseDouble(et2.getText().toString());
-        }
-
-        mv.getController().setCenter(new GeoPoint(latitude, longitude));
-
-    }
 
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -95,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         {
             Intent intent = new Intent(this,SetLocationActivity.class);
             startActivityForResult(intent,1);
+            return true;
+        }
+        if(item.getItemId() == R.id.prefsactivity)
+        {
+            Intent intent = new Intent(this,MyPrefsActivity.class);
+            startActivityForResult(intent,2);
             return true;
         }
         return false;
@@ -130,5 +115,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mv.getController().setCenter(new GeoPoint(latitude, longitude));
             }
         }
+    }
+
+    public void onResume()
+    {
+        super.onResume();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        double lat = Double.parseDouble ( prefs.getString("lat", "50.9") );
+        double lon = Double.parseDouble ( prefs.getString("lon", "-1.4") );
+        double zoom = Double.parseDouble( prefs.getString("zoom","16"));
+        boolean autodownload = prefs.getBoolean("autodownload", true);
+        String mapType = prefs.getString("maptype", "NM");
+
+        mv.getController().setCenter(new GeoPoint(lat, lon));
+        mv.getController().setZoom(zoom);
+
+        if("NM".equals(mapType))
+        {
+            mv.setTileSource(TileSourceFactory.MAPNIK);
+        }
+        else
+        {
+            mv.setTileSource(TileSourceFactory.HIKEBIKEMAP);
+        }
+    }
+
+    public void onDestroy()
+    {
+        super.onDestroy();
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean ("isRecording", isRecording);
+        editor.commit();
+    }
+
+    public void onSaveInstanceState (Bundle savedInstanceState)
+    {
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putBoolean("isRecording", isRecording);
     }
 }

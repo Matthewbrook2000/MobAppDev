@@ -9,4 +9,5 @@
     <string name="regularview">Regular view</string>
     <string name="hikebikemapview">Hike bike map view</string>
     <string name="setlocation">Set Location</string>
+    <string name="prefsactivity">Preferences</string>
 </resources>

@@ -12,6 +12,11 @@
         android:defaultValue="-1.4"
         android:title="Longitude"
         android:summary="Longitude to show the map at initially." />
+    <EditTextPreference
+        android:key="zoom"
+        android:defaultValue="16"
+        android:title="zoom"
+        android:summary="Default zoom level on map." />
 
     <CheckBoxPreference
         android:key="autodownload"
@@ -19,11 +24,10 @@
         android:title="Auto-download"
         android:summary="Auto-download data about surrounding cinemas?" />
 
-
     <ListPreference
-        android:key="pizza"
-        android:title="Pizza flavour"
-        android:summary="Choose your pizza flavour."
-        android:entries="@array/pizzaFlavours"
-        android:entryValues="@array/pizzaFlavourCodes" />
+        android:key="maptype"
+        android:title="Map type"
+        android:summary="Choose your map type."
+        android:entries="@array/MapTypes"
+        android:entryValues="@array/MapTypeCodes" />
 </PreferenceScreen>

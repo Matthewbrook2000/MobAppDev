@@ -1,16 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
-    <string-array name="pizzaFlavours">
-        <item>Cheese, Tomato and Mushroom</item>
-        <item>Ham and Pineapple</item>
-        <item>Hot n'Spicy</item>
-        <item>Seafood</item>
+    <string-array name="MapTypes">
+        <item>Normal</item>
+        <item>Hike Bike Map</item>
     </string-array>
-    <string-array name="pizzaFlavourCodes">
-        <item>CTM</item>
-        <item>HP</item>
-        <item>HS</item>
-        <item>SF</item>
+    <string-array name="MapTypeCodes">
+        <item>NM</item>
+        <item>HBM</item>
     </string-array>
 </resources>
