@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+    <string-array name="MapTypes">
+        <item>Normal</item>
+        <item>Hike Bike Map</item>
+    </string-array>
+    <string-array name="MapTypeCodes">
+        <item>NM</item>
+        <item>HBM</item>
+    </string-array>
+</resources>
