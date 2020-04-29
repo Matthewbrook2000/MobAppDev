@@ -19,6 +19,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".PrefsActivity" android:label="Prefs Activity"></activity>
     </application>
 
 </manifest>

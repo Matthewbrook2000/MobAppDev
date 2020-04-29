@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <EditTextPreference
+        android:key="filenm"
+        android:defaultValue="textedit.txt"
+        android:title="File name"
+        android:summary="The file name of the save." />
+
+</PreferenceScreen>

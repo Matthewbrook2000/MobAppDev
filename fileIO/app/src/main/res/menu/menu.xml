@@ -2,4 +2,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/saveText" android:title="Save text"/>
     <item android:id="@+id/loadText" android:title="Load text"/>
+    <item android:id="@+id/preferences" android:title="Preferences"/>
 </menu>
