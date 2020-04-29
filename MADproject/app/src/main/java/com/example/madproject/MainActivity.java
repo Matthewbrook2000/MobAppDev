@@ -41,6 +41,39 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mv.getController().setCenter(new GeoPoint(51.05,-0.72));
     }
 
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater=getMenuInflater();
+        inflater.inflate(R.menu.menu, menu);
+        return true;
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        if(item.getItemId() == R.id.addnewpts)
+        {
+            Intent intent = new Intent(this,AddNewPTS.class);
+            startActivity(intent);
+            return true;
+        } else if(item.getItemId() == R.id.savepts)
+        {
+            Intent intent = new Intent(this,SaveNewPTS.class);
+            startActivity(intent);
+            return true;
+        } else if(item.getItemId() == R.id.preferences)
+        {
+            Intent intent = new Intent(this,Preferences.class);
+            startActivity(intent);
+            return true;
+        } else if(item.getItemId() == R.id.loadpts)
+        {
+            Intent intent = new Intent(this,LoadPTS.class);
+            startActivity(intent);
+            return true;
+        }
+        return false;
+    }
+
     public void onLocationChanged(Location newLoc)
     {
         mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
