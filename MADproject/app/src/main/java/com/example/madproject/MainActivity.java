@@ -12,11 +12,14 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
-
+import org.osmdroid.views.overlay.ItemizedIconOverlay;
+import org.osmdroid.views.overlay.OverlayItem;
 import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -53,7 +56,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if(item.getItemId() == R.id.addnewpts)
         {
             Intent intent = new Intent(this,AddNewPTS.class);
-            startActivity(intent);
+            startActivityForResult(intent,0);
             return true;
         } else if(item.getItemId() == R.id.savepts)
         {
@@ -72,6 +75,33 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             return true;
         }
         return false;
+    }
+
+    protected void onActivityResult(int requestCode,int resultCode,Intent intent)
+    {
+        ItemizedIconOverlay<OverlayItem> items;
+
+        if(requestCode==0)
+        {
+
+            if (resultCode==RESULT_OK)
+            {
+                Bundle extras=intent.getExtras();
+                String name = extras.getString("com.example.name");
+                String type = extras.getString("com.example.type");
+                String ppn = extras.getString("com.example.ppn");
+//                               System.out.println("****************************************8");
+//                System.out.println(name);
+//                System.out.println(type);
+//                System.out.println(ppn);
+//                System.out.println("****************************************8");
+// cannot yet press on marker
+                items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), null);
+                OverlayItem newmark = new OverlayItem(name, "type" + type + "price" + ppn, mv.getMapCenter());
+                items.addItem(newmark);
+                mv.getOverlays().add(items);
+            }
+        }
     }
 
     public void onLocationChanged(Location newLoc)

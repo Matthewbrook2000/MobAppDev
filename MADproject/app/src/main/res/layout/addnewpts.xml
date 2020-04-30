@@ -8,16 +8,42 @@
         android:orientation="vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:id="@+id/tv1" android:text="@string/nametxt"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:id="@+id/et1"
+            />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:id="@+id/tv2" android:text="@string/typetxt"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:id="@+id/et2"
+            />
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:id="@+id/tv3" android:text="@string/ppntxt"/>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:id="@+id/et3"
+            />
+
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="tester"
-            android:id="@+id/btnRegular" />
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="tester"
-            android:id="@+id/btnHikeBikeMap" />
+            android:text="@string/addnewbtn"
+            android:id="@+id/addnew" />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

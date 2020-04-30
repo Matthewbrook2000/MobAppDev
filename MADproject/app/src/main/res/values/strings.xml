@@ -8,4 +8,8 @@
     <string name="saveptstitle">Load PTS</string>
     <string name="prefstitle">Load PTS</string>
     <string name="loadptstitle">Load PTS</string>
+    <string name="nametxt">Name:</string>
+    <string name="typetxt">Type:</string>
+    <string name="ppntxt">Price per night:</string>
+    <string name="addnewbtn">Place marker</string>
 </resources>
