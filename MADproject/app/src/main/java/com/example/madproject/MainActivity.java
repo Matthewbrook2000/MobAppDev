@@ -24,6 +24,9 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
     MapView mv;
+    ItemizedIconOverlay<OverlayItem> items; //i need to update this after i have got activity result, so the oncreate function can see new ones added
+    ItemizedIconOverlay.OnItemGestureListener<OverlayItem> markerGestureListener;
+
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -42,6 +45,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mv.setMultiTouchControls(true);
         mv.getController().setZoom(16.0);
         mv.getController().setCenter(new GeoPoint(51.05,-0.72));
+
+        markerGestureListener = new ItemizedIconOverlay.OnItemGestureListener<OverlayItem>()
+        {
+            public boolean onItemLongPress(int i, OverlayItem item)
+            {
+                Toast.makeText(MainActivity.this, item.getSnippet(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            public boolean onItemSingleTapUp(int i, OverlayItem item)
+            {
+                Toast.makeText(MainActivity.this, item.getSnippet(), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        };
+
+        items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), markerGestureListener);
+        OverlayItem fernhurst = new OverlayItem("Fernhurst", "the village of Fernhurst", new GeoPoint(51.2682, -0.8508));
+        items.addItem(fernhurst);
+        mv.getOverlays().add(items);
+
     }
 
     public boolean onCreateOptionsMenu(Menu menu)
@@ -79,27 +103,22 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     protected void onActivityResult(int requestCode,int resultCode,Intent intent)
     {
-        ItemizedIconOverlay<OverlayItem> items;
 
         if(requestCode==0)
         {
 
             if (resultCode==RESULT_OK)
             {
+
                 Bundle extras=intent.getExtras();
                 String name = extras.getString("com.example.name");
                 String type = extras.getString("com.example.type");
                 String ppn = extras.getString("com.example.ppn");
-//                               System.out.println("****************************************8");
-//                System.out.println(name);
-//                System.out.println(type);
-//                System.out.println(ppn);
-//                System.out.println("****************************************8");
-// cannot yet press on marker
                 items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), null);
                 OverlayItem newmark = new OverlayItem(name, "type" + type + "price" + ppn, mv.getMapCenter());
                 items.addItem(newmark);
                 mv.getOverlays().add(items);
+
             }
         }
     }
