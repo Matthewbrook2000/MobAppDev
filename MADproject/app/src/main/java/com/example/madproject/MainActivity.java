@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Environment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -21,14 +22,18 @@ import org.osmdroid.config.Configuration;
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.views.MapView;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements LocationListener {
 
@@ -36,8 +41,69 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     ItemizedIconOverlay<OverlayItem> items;
     ItemizedIconOverlay.OnItemGestureListener<OverlayItem> markerGestureListener;
     private final String FILE_LOCATION = Environment.getExternalStorageDirectory().getAbsolutePath() ;
-    private final String FILENAME= "savedpts.txt";
+    private final String FILENAME= "savedpts.csv";
     private String currentFileLocation = FILE_LOCATION+"/"+FILENAME;
+    List<String> toSavePTS = new ArrayList<>();
+
+    // lat and lon the wrong way = lon and lat
+    // post them the wrong way around aswell
+    // to access global variable, MainActivity.this.*variablename*
+    class LoadFromWeb extends AsyncTask<Void,Void,String>
+    {
+        public String doInBackground(Void... unused)
+        {
+            HttpURLConnection conn = null;
+            try
+            {
+                URL url = new URL("https://www.hikar.org/course/ws/get.php?year=20&username=user010&format=csv");
+                conn = (HttpURLConnection) url.openConnection();
+                InputStream in = conn.getInputStream();
+                if(conn.getResponseCode() == 200)
+                {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                    String result = "", line;
+                    while((line = br.readLine()) !=null)
+                    {
+                        String[] ptscomponents = line.split(",");
+                        if (ptscomponents.length == 5) {
+                                    String name = ptscomponents[0];
+                                    String type = ptscomponents[1];
+                                    String ppn = ptscomponents[2];
+                                    Double lon = Double.parseDouble(ptscomponents[3]);
+                                    Double lat = Double.parseDouble(ptscomponents[4]);
+                                    items = new ItemizedIconOverlay<OverlayItem>(MainActivity.this, new ArrayList<OverlayItem>(), markerGestureListener);
+                                    OverlayItem newmark = new OverlayItem(name, "type" + type + "price" + ppn, new GeoPoint(lat, lon));
+                                    items.addItem(newmark);
+                                    mv.getOverlays().add(items);
+                        }
+                    }
+
+                    return result;
+                }
+                else
+                {
+                    return "HTTP ERROR: " + conn.getResponseCode();
+                }
+            }
+            catch(IOException e)
+            {
+                return e.toString();
+            }
+            finally
+            {
+                if(conn!=null)
+                {
+                    conn.disconnect();
+                }
+            }
+        }
+
+        public void onPostExecute(String result)
+        {
+
+        }
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState)
@@ -60,15 +126,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mv.setMultiTouchControls(true);
         mv.getController().setZoom(16.0);
         mv.getController().setCenter(new GeoPoint(51.05,-0.72));
-        // set up save to save the current pts (probably along the lines of creating a global array variable which all pts are added to when they are created and toString)
-        //set up load to load all pts (file I/O task has details on breaking down strings that have been read)
-        // set up prefs to auto save (set a pref to the option, then when a marker is created have an IF statement checking the pref if its on then save it, also in onResume have an if statement checking the pref if it is on save all to file)
-        //
-//SAVE AS NAME,DESC,PRICE,LON,LAT
-//        items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), markerGestureListener);
-//        OverlayItem fernhurst = new OverlayItem("Fernhurst", "the village of Fernhurst", new GeoPoint(51.2682, -0.8508));
-//        items.addItem(fernhurst);
-//        mv.getOverlays().add(items);
 
     }
     @Override
@@ -96,9 +153,25 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     {
         super.onResume();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String filenm = prefs.getString("filenm", "textedit.txt");
-
+        String filenm = prefs.getString("filenm", "textedit.csv");
         currentFileLocation = FILE_LOCATION +"/"+ filenm;
+        boolean autodownload = prefs.getBoolean("autodownload", true);
+        if(autodownload){
+            PrintWriter pw=null;
+            try {
+                File file = new File(currentFileLocation);
+                System.out.println("****************** debug file="+file.getAbsolutePath());
+                pw = new PrintWriter(new FileWriter(file));
+                for(int i = 0; i < toSavePTS.size(); i++) {
+                    pw.println(toSavePTS.get(i));
+                }
+
+            } catch (IOException e) {
+                new AlertDialog.Builder(this).setMessage ("Error loading").setPositiveButton("Dismiss", null).show();
+            } finally{
+                if (pw!=null) pw.close();
+            }
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu)
@@ -122,8 +195,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 File file = new File(currentFileLocation);
                 System.out.println("****************** debug file="+file.getAbsolutePath());
                 pw = new PrintWriter(new FileWriter(file));
-
-                pw.println(et.getText().toString()); //change this to print the details of markers
+                for(int i = 0; i < toSavePTS.size(); i++) {
+                    pw.println(toSavePTS.get(i));
+                }
 
             } catch (IOException e) {
                 new AlertDialog.Builder(this).setMessage ("Error loading").setPositiveButton("Dismiss", null).show();
@@ -139,7 +213,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 String line = "";
                 while ((line = reader.readLine()) != null) {
                     System.out.println(line);
-                    et.setText(line);               //change this to display all markers
+                        String[] components = line.split(",");
+                        if(components.length==5)
+                        {
+                            String name = components[0];
+                            String type = components[1];
+                            String ppn = components[2];
+                            Double lon = Double.parseDouble(components[3]);
+                            Double lat = Double.parseDouble(components[4]);
+                            items = new ItemizedIconOverlay<OverlayItem>(this, new ArrayList<OverlayItem>(), markerGestureListener);
+                            OverlayItem newmark = new OverlayItem(name, "type" + type + "price" + ppn, new GeoPoint(lat, lon));
+                            items.addItem(newmark);
+                            mv.getOverlays().add(items);
+                        }
                 }
             } catch (IOException e) {
                 new AlertDialog.Builder(this).setMessage ("Error loading").setPositiveButton("Dismiss", null).show();
@@ -150,6 +236,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         {
             Intent intent = new Intent(this,Preferences.class);
             startActivity(intent);              //figure out how to automatically save pts to file
+            return true;
+        } else if(item.getItemId() == R.id.loadptsfromweb)
+        {
+            LoadFromWeb t = new LoadFromWeb();
+            t.execute();
+            return true;
+        } else if(item.getItemId() == R.id.saveptstoweb)
+        {
             return true;
         }
         return false;
@@ -172,7 +266,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 OverlayItem newmark = new OverlayItem(name, "type" + type + "price" + ppn, mv.getMapCenter());
                 items.addItem(newmark);
                 mv.getOverlays().add(items);
-
+                toSavePTS.add(name + "," + type + "," + ppn + "," + mv.getMapCenter().getLongitude() + "," + mv.getMapCenter().getLatitude());
             }
         }
     }

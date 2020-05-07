@@ -1,7 +1,10 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/addnewpts" android:title="@string/newpts"/>
-    <item android:id="@+id/savepts" android:title="@string/savepts"/>
+    <item android:id="@+id/savepts" android:title="@string/saveptstofile"/>
     <item android:id="@+id/preferences" android:title="@string/prefs"/>
-    <item android:id="@+id/loadpts" android:title="@string/loadpts"/>
+    <item android:id="@+id/loadpts" android:title="@string/loadptsfromfile"/>
+    <item android:id="@+id/saveptstoweb" android:title="@string/saveptstoweb"/>
+    <item android:id="@+id/loadptsfromweb" android:title="@string/loadptsfromweb"/>
+
 </menu>

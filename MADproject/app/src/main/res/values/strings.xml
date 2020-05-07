@@ -2,9 +2,11 @@
     <string name="app_name">MADproject</string>
     <string name="newpts">Add new PTS</string>
     <string name="addnewpts">AddnewPTS</string>
-    <string name="savepts">Save PTS</string>
+    <string name="saveptstofile">Save PTS to file</string>
+    <string name="saveptstoweb">Save PTS to web</string>
+    <string name="loadptsfromweb">Load PTS from web</string>
     <string name="prefs">Preferences</string>
-    <string name="loadpts">Load PTS</string>s
+    <string name="loadptsfromfile">Load PTS from file</string>s
     <string name="saveptstitle">Load PTS</string>
     <string name="prefstitle">Load PTS</string>
     <string name="loadptstitle">Load PTS</string>
