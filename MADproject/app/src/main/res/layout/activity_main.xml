@@ -11,13 +11,27 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <org.osmdroid.views.MapView
-            android:layout_width="match_parent"
+        <RelativeLayout android:orientation="horizontal" android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <fragment class="com.example.madproject.MapFrag"
+            android:layout_alignParentRight="true"
+            android:layout_width="550px"
             android:layout_height="match_parent"
-            android:enabled="true"
-            android:clickable="true"
-            android:id="@+id/map1"
-            tilesource="Mapnik" />
+            android:layout_weight="1"
+            android:id="@+id/mapfrag">
+        </fragment>
+
+        <fragment class="com.example.madproject.PTSListFrag"
+            android:layout_width="275px"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_toLeftOf="@id/mapfrag"
+            android:id="@+id/personDetailsFrag">
+
+        </fragment>
+
+        </RelativeLayout>
 
     </LinearLayout>
 

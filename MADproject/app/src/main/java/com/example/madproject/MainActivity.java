@@ -48,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     //Set up auto load and auto save to web shit
 
-    //create layout-land and layout-port
-    //create the layout.xml's
     // portrait is just the same as usual, create another activity as normal
     // landscape layout is 2 fragments in horizontal orientation, with width of 0 pixels
     // landscape, vary simple, just have one xml file and 2 <fragment>'s inside it
@@ -199,6 +197,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         mv.getController().setCenter(new GeoPoint(51.05,-0.72));
 
     }
+
+    public void receiveText (Double lon, Double lat)
+    {
+        System.out.println("lon = " + lon + "lat = " + lat);
+        mv.getController().setCenter(new GeoPoint(lat,lon));   //not moving yet probably onresume resetting it
+    }
+
     @Override
     public void onStart()
     {
