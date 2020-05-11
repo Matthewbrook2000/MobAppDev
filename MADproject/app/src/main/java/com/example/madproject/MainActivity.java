@@ -29,6 +29,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -45,9 +46,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private String currentFileLocation = FILE_LOCATION+"/"+FILENAME;
     List<String> toSavePTS = new ArrayList<>();
 
-    // lat and lon the wrong way = lon and lat
-    // post them the wrong way around aswell
-    // to access global variable, MainActivity.this.*variablename*
+    //Set up auto load and auto save to web shit
+
+    //create layout-land and layout-port
+    //create the layout.xml's
+    // portrait is just the same as usual, create another activity as normal
+    // landscape layout is 2 fragments in horizontal orientation, with width of 0 pixels
+    // landscape, vary simple, just have one xml file and 2 <fragment>'s inside it
+    // use listfragment's to display list of places
+    // for the rest follow code
+
+    //make sure the files dont overwrite
     class LoadFromWeb extends AsyncTask<Void,Void,String>
     {
         public String doInBackground(Void... unused)
@@ -101,6 +110,68 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         public void onPostExecute(String result)
         {
 
+        }
+    }
+
+    class PostToWeb extends AsyncTask<Void,Void,String>
+    {
+        public String doInBackground(Void... unused)
+        {
+            HttpURLConnection conn = null;
+            try
+            {
+                URL url = new URL("https://www.hikar.org/course/ws/add.php");
+                conn = (HttpURLConnection) url.openConnection();
+                for(int i = 0; i < MainActivity.this.toSavePTS.size(); i++) {
+                    String[] components = MainActivity.this.toSavePTS.get(i).split(",");
+                    String name = components[0];
+                    String type = components[1];
+                    String ppn = components[2];
+                    Double lon = Double.parseDouble(components[3]);
+                    Double lat = Double.parseDouble(components[4]);
+
+                    String postData = "username=user010&name=" + name + "&type=" + type +"&price=" + ppn + "&lat=" + lat + "&lon=" + lon + "&year=20";
+
+                    conn.setDoOutput(true);
+                    conn.setFixedLengthStreamingMode(postData.length());
+
+                    OutputStream out = null;
+                    out = conn.getOutputStream();
+                    out.write(postData.getBytes());
+                }
+                if(conn.getResponseCode() == 200)
+                {
+                    InputStream in = conn.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                    String all = "", line;
+                    while((line = br.readLine()) !=null)
+                        all += line;
+                    return all;
+                }
+                else
+                {
+                    return "HTTP ERROR: " + conn.getResponseCode();
+                }
+            }
+            catch(IOException e)
+            {
+                return e.toString();
+            }
+            finally
+            {
+                if(conn!=null)
+                {
+                    conn.disconnect();
+                }
+            }
+        }
+
+        public void onPostExecute(String result)
+        {
+
+            new AlertDialog.Builder(MainActivity.this).
+                    setMessage("Server sent back: " + result).
+                    setPositiveButton("OK", null).show();
         }
     }
 
@@ -244,6 +315,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             return true;
         } else if(item.getItemId() == R.id.saveptstoweb)
         {
+            PostToWeb p = new PostToWeb();
+            p.execute();
             return true;
         }
         return false;
