@@ -45,17 +45,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private final String FILENAME= "savedpts.csv";
     private String currentFileLocation = FILE_LOCATION+"/"+FILENAME;
     List<String> toSavePTS = new ArrayList<>();
+    List<String> toSavePTSFile = new ArrayList<>();
     Boolean ListItemSelected = false;
 
-    //Set up auto load and auto save to web shit
+    //********************************
+    //********************************
+    //Run in landscape mode, if list does not appear restart app
+    //********************************
+    //********************************
 
-    // portrait is just the same as usual, create another activity as normal
-    // landscape layout is 2 fragments in horizontal orientation, with width of 0 pixels
-    // landscape, vary simple, just have one xml file and 2 <fragment>'s inside it
-    // use listfragment's to display list of places
-    // for the rest follow code
-
-    //make sure the files dont overwrite
     class LoadFromWeb extends AsyncTask<Void,Void,String>
     {
         public String doInBackground(Void... unused)
@@ -140,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
                 if(conn.getResponseCode() == 200)
                 {
+                    MainActivity.this.toSavePTS.clear();
                     InputStream in = conn.getInputStream();
                     BufferedReader br = new BufferedReader(new InputStreamReader(in));
                     String all = "", line;
@@ -230,26 +229,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void onResume()
     {
         super.onResume();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-        String filenm = prefs.getString("filenm", "textedit.csv");
-        currentFileLocation = FILE_LOCATION +"/"+ filenm;
-        boolean autodownload = prefs.getBoolean("autodownload", true);
-        if(autodownload){
-            PrintWriter pw=null;
-            try {
-                File file = new File(currentFileLocation);
-                System.out.println("****************** debug file="+file.getAbsolutePath());
-                pw = new PrintWriter(new FileWriter(file));
-                for(int i = 0; i < toSavePTS.size(); i++) {
-                    pw.println(toSavePTS.get(i));
-                }
-
-            } catch (IOException e) {
-                new AlertDialog.Builder(this).setMessage ("Error loading").setPositiveButton("Dismiss", null).show();
-            } finally{
-                if (pw!=null) pw.close();
-            }
-        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu)
@@ -273,8 +252,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 File file = new File(currentFileLocation);
                 System.out.println("****************** debug file="+file.getAbsolutePath());
                 pw = new PrintWriter(new FileWriter(file));
-                for(int i = 0; i < toSavePTS.size(); i++) {
-                    pw.println(toSavePTS.get(i));
+                for(int i = 0; i < toSavePTSFile.size(); i++) {
+                    pw.println(toSavePTSFile.get(i));
                 }
 
             } catch (IOException e) {
@@ -347,6 +326,29 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 items.addItem(newmark);
                 mv.getOverlays().add(items);
                 toSavePTS.add(name + "," + type + "," + ppn + "," + mv.getMapCenter().getLongitude() + "," + mv.getMapCenter().getLatitude());
+                toSavePTSFile.add(name + "," + type + "," + ppn + "," + mv.getMapCenter().getLongitude() + "," + mv.getMapCenter().getLatitude());
+
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                boolean autosave = prefs.getBoolean("autosave", true);
+                if(autosave == true){
+                    PostToWeb p = new PostToWeb();
+                    p.execute();
+
+                    PrintWriter pw=null;
+                    try {
+                        File file = new File(currentFileLocation);
+                        System.out.println("****************** debug file="+file.getAbsolutePath());
+                        pw = new PrintWriter(new FileWriter(file));
+                        for(int i = 0; i < toSavePTSFile.size(); i++) {
+                            pw.println(toSavePTSFile.get(i));
+                        }
+                    } catch (IOException e) {
+                        new AlertDialog.Builder(this).setMessage ("Error loading").setPositiveButton("Dismiss", null).show();
+                    } finally{
+                        toSavePTSFile.clear();
+                        if (pw!=null) pw.close();
+                    }
+                }
             }
         }
     }
