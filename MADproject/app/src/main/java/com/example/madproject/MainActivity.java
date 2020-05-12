@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private final String FILENAME= "savedpts.csv";
     private String currentFileLocation = FILE_LOCATION+"/"+FILENAME;
     List<String> toSavePTS = new ArrayList<>();
+    Boolean ListItemSelected = false;
 
     //Set up auto load and auto save to web shit
 
@@ -201,7 +202,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     public void receiveText (Double lon, Double lat)
     {
         System.out.println("lon = " + lon + "lat = " + lat);
-        mv.getController().setCenter(new GeoPoint(lat,lon));   //not moving yet probably onresume resetting it
+        mv.getController().setCenter(new GeoPoint(lon,lat));
+        ListItemSelected = true;
     }
 
     @Override
@@ -359,7 +361,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public void onLocationChanged(Location newLoc)
     {
-        mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
+        if(ListItemSelected == true){
+            System.out.println("ListItemSelected");
+        } else {
+            mv.getController().setCenter(new GeoPoint(newLoc.getLatitude(), newLoc.getLongitude()));
+        }
+
     }
 
     public void onProviderDisabled(String provider){}
